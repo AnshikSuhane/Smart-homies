@@ -1,0 +1,231 @@
+/* General Styles */
+.home-container {
+    min-height: 100vh;
+    background: linear-gradient(to bottom right, #f0f4ff, #e0e7ff, #dbeafe);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+  }
+  
+  .home-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  /* Header Styles */
+  .home-header {
+    margin-bottom: 4rem;
+  }
+  
+  .home-title {
+    font-size: 4.5rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(to right, #4f46e5, #9333ea);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: fadeInDown 0.8s ease-out;
+  }
+  
+  .home-subtitle {
+    font-size: 1.75rem;
+    color: #475569;
+    margin-bottom: 2.5rem;
+    animation: fadeInUp 0.8s ease-out;
+  }
+  
+  .home-button {
+    display: inline-block;
+    background-color: #4f46e5;
+    color: white;
+    padding: 1rem 2.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    animation: bounceIn 0.8s ease-out;
+  }
+  
+  .home-button:hover {
+    background-color: #4338ca;
+    transform: scale(1.05);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .home-button::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, #4f46e5, #9333ea);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 0.5rem;
+  }
+  
+  .home-button:hover::after {
+    opacity: 1;
+  }
+  
+  /* Feature Cards */
+  .home-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  
+  .feature-card {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .feature-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .feature-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, #4f46e5, #9333ea);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .feature-card:hover::after {
+    opacity: 1;
+  }
+  
+  .feature-icon {
+    width: 4rem;
+    height: 4rem;
+    color: #4f46e5;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .feature-card:hover .feature-icon {
+    color: white;
+    transform: rotate(12deg);
+  }
+  
+  .feature-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .feature-card:hover .feature-title {
+    color: white;
+  }
+  
+  .feature-description {
+    font-size: 1.125rem;
+    color: #475569;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .feature-card:hover .feature-description {
+    color: white;
+  }
+  
+  /* Animations */
+  @keyframes fadeInDown {
+    0% {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes bounceIn {
+    0% {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.2);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  @keyframes fadeInLeft {
+    0% {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes fadeInRight {
+    0% {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  /* Apply Animations to Feature Cards */
+  .feature-card:nth-child(1) {
+    animation: fadeInLeft 0.8s ease-out;
+  }
+  
+  .feature-card:nth-child(2) {
+    animation: fadeIn 0.8s ease-out;
+  }
+  
+  .feature-card:nth-child(3) {
+    animation: fadeInRight 0.8s ease-out;
+  }
+  
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
