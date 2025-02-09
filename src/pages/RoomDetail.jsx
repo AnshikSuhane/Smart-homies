@@ -1,34 +1,53 @@
+/* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
-  Power, Trash2, Plus, Loader2, Thermometer, 
-  ChevronUp, ChevronDown, Fan, Sun, 
-  Lightbulb, LampFloor, SlidersHorizontal
+  Power,
+  Trash2,
+  Plus,
+  Loader2,
+  Thermometer,
+  ChevronUp,
+  ChevronDown,
+  Fan,
+  Sun,
+  Lightbulb,
+  LampFloor,
+  SlidersHorizontal,
+  ArrowRightLeftIcon,
+  ArrowRightIcon,
 } from "lucide-react";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
-
+// Device Icon Component
 const DeviceIcon = ({ type = "", className = "h-6 w-6" }) => {
   const deviceType = type?.toLowerCase() ?? "";
+
   switch (deviceType) {
-    case "thermostat": return <Thermometer className={className} />;
-    case "fan": return <Fan className={className} />;
-    case "spotlights": return <Sun className={className} />;
-    case "floor lamp": return <LampFloor className={className} />;
-    case "bar lamp": return <Lightbulb className={className} />;
-    default: return <Lightbulb className={className} />;
+    case "thermostat":
+      return <Thermometer className={className} />;
+    case "fan":
+      return <Fan className={className} />;
+    case "spotlights":
+      return <Sun className={className} />;
+    case "floor lamp":
+      return <LampFloor className={className} />;
+    case "bar lamp":
+      return <Lightbulb className={className} />;
+    default:
+      return <Lightbulb className={className} />;
   }
 };
 
+// Device Controls Component
 const DeviceControls = ({ device, onUpdateValue }) => {
-  if (!device || !device.name) return null;
+  if (!device || !device.name) {
+    return null;
+  }
 
   const [temperature, setTemperature] = useState(22);
   const [fanSpeed, setFanSpeed] = useState("low");
   const [brightness, setBrightness] = useState(50);
-
+  
   const handleTemperatureChange = (delta) => {
     const newTemp = temperature + delta;
     setTemperature(newTemp);
@@ -43,80 +62,71 @@ const DeviceControls = ({ device, onUpdateValue }) => {
     onUpdateValue("fanSpeed", speeds[nextIndex]);
   };
 
-  const handleBrightnessChange = (value) => {
-    setBrightness(value[0]);
-    onUpdateValue("brightness", value[0]);
+  const handleBrightnessChange = (newValue) => {
+    setBrightness(newValue);
+    onUpdateValue("brightness", newValue);
   };
 
   switch (device.name.toLowerCase()) {
     case "thermostat":
       return (
-        <div className="space-y-2" role="group" aria-label="Temperature controls">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Temperature</span>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => handleTemperatureChange(-1)}
-                aria-label="Decrease temperature"
-              >
-                <ChevronDown className="h-4 w-4" />
-              </Button>
-              <span className="w-12 text-center font-medium" aria-live="polite">
-                {temperature}°C
-              </span>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => handleTemperatureChange(1)}
-                aria-label="Increase temperature"
-              >
-                <ChevronUp className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
+        <div
+          className="flex items-center space-x-2"
+          role="group"
+          aria-label="Temperature controls"
+        >
+          <button
+            onClick={() => handleTemperatureChange(-1)}
+            className="p-1 rounded-md bg-gray-100 hover:bg-gray-200"
+            aria-label="Decrease temperature"
+          >
+            <ChevronDown className="h-4 w-4" />
+          </button>
+          <span className="text-sm font-medium" aria-live="polite">
+            {temperature}°C
+          </span>
+          <button
+            onClick={() => handleTemperatureChange(1)}
+            className="p-1 rounded-md bg-gray-100 hover:bg-gray-200"
+            aria-label="Increase temperature"
+          >
+            <ChevronUp className="h-4 w-4" />
+          </button>
         </div>
       );
 
     case "fan":
       return (
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Fan Speed</span>
-            <Select value={fanSpeed} onValueChange={handleFanSpeedChange}>
-              <SelectTrigger className="w-32">
-                <SelectValue placeholder="Select speed" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="low">Low</SelectItem>
-                <SelectItem value="medium">Medium</SelectItem>
-                <SelectItem value="high">High</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
+        <button
+          onClick={handleFanSpeedChange}
+          className="px-3 py-1 text-sm rounded-md bg-gray-100 hover:bg-gray-200 capitalize"
+          aria-label={`Fan speed : ${fanSpeed}`}
+        >
+          {fanSpeed}
+        </button>
       );
 
     case "spotlights":
     case "floor lamp":
     case "bar lamp":
       return (
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Brightness</span>
-            <span className="text-sm font-medium" aria-live="polite">
-              {brightness}%
-            </span>
-          </div>
-          <Slider
-            value={[brightness]}
-            onValueChange={handleBrightnessChange}
-            max={100}
-            step={1}
-            className="w-full"
+        <div className="flex items-center space-x-2">
+          <SlidersHorizontal className="h-4 w-4" />
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value={brightness}
+            onChange={(e) => handleBrightnessChange(parseInt(e.target.value))}
+            className="w-24 h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer"
             aria-label="Brightness"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow={brightness}
           />
+          <span className="text-sm" aria-live="polite">
+            {brightness}%
+          </span>
         </div>
       );
 
@@ -125,16 +135,17 @@ const DeviceControls = ({ device, onUpdateValue }) => {
   }
 };
 
-const RoomDetail = ({ roomId = 0 }) => {
+const RoomDetail = () => {
   const [deviceData, setDeviceData] = useState([]);
   const [selectedDeviceId, setSelectedDeviceId] = useState("");
   const [singleDevice, setSingleDevice] = useState(null);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const userId = 0;
+  const [userKey, setUserKey] = useState(null);
+  const navigate=useNavigate()
+  useParams();
 
-  // Keep all the existing fetch and handle functions
   const fetchDevicesData = async () => {
     try {
       const resp = await fetch(
@@ -151,7 +162,8 @@ const RoomDetail = ({ roomId = 0 }) => {
     }
   };
 
-  const handleDeviceSelection = async (value) => {
+  const handleDeviceSelection = async (e) => {
+    const value = e.target.value;
     setSelectedDeviceId(value);
 
     try {
@@ -166,7 +178,7 @@ const RoomDetail = ({ roomId = 0 }) => {
   };
 
   const addDevice = async () => {
-    if (!singleDevice) return;
+    if (!singleDevice || !userKey) return;
     setLoading(true);
 
     const newDevice = {
@@ -179,14 +191,7 @@ const RoomDetail = ({ roomId = 0 }) => {
     };
 
     try {
-      const userResponse = await fetch(
-        "https://jagannath-45cbd-default-rtdb.firebaseio.com/users.json"
-      );
-      const users = await userResponse.json();
-      const firstUserKey = Object.keys(users)[0];
-      const firstUser = users[firstUserKey];
-
-      const updatedRooms = firstUser.rooms.map((room, index) =>
+      const updatedRooms = userData.rooms.map((room, index) =>
         index === 0
           ? {
               ...room,
@@ -198,15 +203,18 @@ const RoomDetail = ({ roomId = 0 }) => {
       );
 
       await fetch(
-        `https://jagannath-45cbd-default-rtdb.firebaseio.com/users/${firstUserKey}.json`,
+        `https://jagannath-45cbd-default-rtdb.firebaseio.com/users/${userKey}.json`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...firstUser, rooms: updatedRooms }),
+          body: JSON.stringify({ ...userData, rooms: updatedRooms }),
         }
       );
 
-      fetchAllRoomAppliance();
+      setUserData((prev) => ({
+        ...prev,
+        rooms: updatedRooms,
+      }));
       setSingleDevice(null);
       setSelectedDeviceId("");
     } catch (error) {
@@ -217,8 +225,14 @@ const RoomDetail = ({ roomId = 0 }) => {
   };
 
   const toggleDevice = async (roomIndex, deviceIndex, currentStatus) => {
+    if (!userKey) {
+      console.error("User key not found");
+      return;
+    }
+
     const newStatus = currentStatus === "on" ? "off" : "on";
 
+    // Optimistic update
     setUserData((prev) => {
       const updated = { ...prev };
       updated.rooms[roomIndex].devices[deviceIndex].status = newStatus;
@@ -227,13 +241,14 @@ const RoomDetail = ({ roomId = 0 }) => {
 
     try {
       await fetch(
-        `https://jagannath-45cbd-default-rtdb.firebaseio.com/users/${userId}/rooms/${roomIndex}/devices/${deviceIndex}/status.json`,
+        `https://jagannath-45cbd-default-rtdb.firebaseio.com/users/${userKey}/rooms/${roomIndex}/devices/${deviceIndex}/status.json`,
         {
           method: "PUT",
           body: JSON.stringify(newStatus),
         }
       );
     } catch (error) {
+      // Revert on error
       setUserData((prev) => {
         const updated = { ...prev };
         updated.rooms[roomIndex].devices[deviceIndex].status = currentStatus;
@@ -244,25 +259,53 @@ const RoomDetail = ({ roomId = 0 }) => {
   };
 
   const deleteDevice = async (roomIndex, deviceIndex) => {
+    if (!userKey) {
+      console.error("User key not found");
+      return;
+    }
+
     setIsDeleting(true);
+
+    // Store current state for rollback
     const previousUserData = { ...userData };
 
-    setUserData((prev) => {
-      const updated = { ...prev };
-      updated.rooms[roomIndex].devices = updated.rooms[
-        roomIndex
-      ].devices.filter((_, index) => index !== deviceIndex);
-      return updated;
-    });
-
     try {
+      // Create updated rooms array without the device
+      const updatedRooms = userData.rooms.map((room, rIndex) => {
+        if (rIndex === roomIndex) {
+          const updatedDevices = room.devices.filter(
+            (_, dIndex) => dIndex !== deviceIndex
+          );
+          return {
+            ...room,
+            devices: updatedDevices,
+          };
+        }
+        return room;
+      });
+
+      // Update the entire user object in Firebase
       await fetch(
-        `https://jagannath-45cbd-default-rtdb.firebaseio.com/users/${userId}/rooms/${roomIndex}/devices/${deviceIndex}.json`,
+        `https://jagannath-45cbd-default-rtdb.firebaseio.com/users/${userKey}.json`,
         {
-          method: "DELETE",
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...userData,
+            rooms: updatedRooms,
+          }),
         }
       );
+
+      // Update local state after successful Firebase update
+      setUserData((prev) => ({
+        ...prev,
+        rooms: updatedRooms,
+      }));
     } catch (error) {
+      // Revert on error
       setUserData(previousUserData);
       console.error("Error deleting device:", error);
     } finally {
@@ -272,11 +315,13 @@ const RoomDetail = ({ roomId = 0 }) => {
 
   const fetchAllRoomAppliance = async () => {
     try {
-      const res = await fetch(
-        `https://jagannath-45cbd-default-rtdb.firebaseio.com/users/${userId}.json`
+      const userResponse = await fetch(
+        "https://jagannath-45cbd-default-rtdb.firebaseio.com/users.json"
       );
-      const data = await res.json();
-      setUserData(data);
+      const users = await userResponse.json();
+      const firstUserKey = Object.keys(users)[0];
+      setUserKey(firstUserKey);
+      setUserData(users[firstUserKey]);
     } catch (error) {
       console.error("Error fetching room appliances:", error);
     }
@@ -299,98 +344,115 @@ const RoomDetail = ({ roomId = 0 }) => {
   };
 
   return (
-    <div className="container py-6 space-y-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>Add New Device</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-4">
-            <Select value={selectedDeviceId} onValueChange={handleDeviceSelection}>
-              <SelectTrigger className="flex-1">
-                <SelectValue placeholder="Select a device" />
-              </SelectTrigger>
-              <SelectContent>
-                {deviceData.map((device) => (
-                  <SelectItem key={device.id} value={device.id}>
-                    {device.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Button 
-              onClick={addDevice} 
-              disabled={!singleDevice || loading}
-              className="min-w-[120px]"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Adding...
-                </>
-              ) : (
-                <>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Device
-                </>
-              )}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="p-6 max-w-7xl mx-auto">
+      {/* Add Device Section */}
+      <div className="bg-white rounded-lg shadow-md mb-8 p-6">
+      <span className="flex justify-end">
+  <ArrowRightIcon className="h-11 w-11" onClick={() => navigate("/dashboard")} />
+</span>
+        <div className="mb-4">
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <h2 className="text-xl font-semibold text-gray-800">
+            Add New Device
+          </h2>
+        </div>
+        <div className="flex gap-4 items-center">
+          <select
+            className="flex-1 h-10 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            value={selectedDeviceId}
+            onChange={handleDeviceSelection}
+          >
+            <option value="">Select a device</option>
+            {deviceData.map((device) => (
+              <option key={device.id} value={device.id}>
+                {device.name}
+              </option>
+            ))}
+          </select>
+          <button
+            onClick={addDevice}
+            disabled={!singleDevice || loading}
+            className={`min-w-[120px] h-10 px-4 rounded-md flex items-center justify-center text-sm font-medium transition-colors
+              ${
+                !singleDevice || loading
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  : "bg-blue-500 text-white hover:bg-blue-600"
+              }`}
+          >
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Adding...
+              </>
+            ) : (
+              <>
+                <Plus className="mr-2 h-4 w-4" />
+                Add Device
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Devices Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {userData?.rooms?.map((room, roomIndex) =>
           room?.devices?.length > 0
             ? room?.devices?.map((device, deviceIndex) =>
                 device ? (
-                  <Card key={device.id || deviceIndex}>
-                    <CardContent className="pt-6">
-                      <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center space-x-4">
-                          <div className="p-2 bg-secondary rounded-lg">
-                            <DeviceIcon
-                              type={device.name}
-                              className="h-6 w-6 text-secondary-foreground"
-                            />
-                          </div>
-                          <div>
-                            <h3 className="font-medium">{device.name}</h3>
-                            <p className="text-sm text-muted-foreground">
-                              {new Date(device.start_time).toLocaleDateString()}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Button
-                            variant={device.status === "on" ? "default" : "secondary"}
-                            size="icon"
-                            onClick={() => toggleDevice(roomIndex, deviceIndex, device.status)}
-                          >
-                            <Power className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="destructive"
-                            size="icon"
-                            onClick={() => deleteDevice(roomIndex, deviceIndex)}
-                            disabled={isDeleting}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                  <div
+                    key={device.id || deviceIndex}
+                    className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6"
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center space-x-3">
+                        <DeviceIcon
+                          type={device.name}
+                          className="h-6 w-6 text-gray-600"
+                        />
+                        <div className="flex flex-col">
+                          <h3 className="font-semibold text-lg text-gray-800">
+                            {device.name}
+                          </h3>
+                          <p className="text-sm text-gray-500">
+                            Added:{" "}
+                            {new Date(device.start_time).toLocaleDateString()}
+                          </p>
                         </div>
                       </div>
-                      {device.status === "on" && (
-                        <div className="border-t pt-4">
-                          <DeviceControls
-                            device={device}
-                            onUpdateValue={(key, value) =>
-                              handleDeviceValueUpdate(deviceIndex, key, value)
-                            }
-                          />
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() =>
+                            toggleDevice(roomIndex, deviceIndex, device.status)
+                          }
+                          className={`p-2 rounded-md transition-colors ${
+                            device.status === "on"
+                              ? "bg-green-500 text-white hover:bg-green-600"
+                              : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+                          }`}
+                        >
+                          <Power className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => deleteDevice(roomIndex, deviceIndex)}
+                          disabled={isDeleting}
+                          className="p-2 rounded-md text-red-500 hover:bg-red-50 transition-colors"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                    {device.status === "on" && (
+                      <div className="mt-4 pt-4 border-t border-gray-100">
+                        <DeviceControls
+                          device={device}
+                          onUpdateValue={(key, value) =>
+                            handleDeviceValueUpdate(deviceIndex, key, value)
+                          }
+                        />
+                      </div>
+                    )}
+                  </div>
                 ) : null
               )
             : null
