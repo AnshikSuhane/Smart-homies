@@ -1,21 +1,28 @@
 import { useState, useEffect } from "react";
-import {
-  Box,
-  Paper,
-  Typography,
-  TextField,
-  Button,
-  Avatar,
-  Grid,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  CircularProgress,
-} from "@mui/material";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { doc, updateDoc } from "firebase/firestore";
 import { auth, db, storage, updateUserProfile } from "../Authentication/firebase";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserCircle, Camera, KeyRound, Loader2 } from "lucide-react";
 
 export const Profile = () => {
   const [user, setUser] = useState(null);
@@ -71,10 +78,8 @@ export const Profile = () => {
         setPhotoURL(updatedPhotoURL);
       }
 
-      // Update profile in Firebase Authentication
       await updateUserProfile(name, updatedPhotoURL);
 
-      // Update profile in Firestore
       const userRef = doc(db, "users", user.uid);
       await updateDoc(userRef, {
         displayName: name,
@@ -91,88 +96,142 @@ export const Profile = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: 400, mx: "auto", p: 3, bgcolor: "white", boxShadow: 3, borderRadius: 2 }}>
-      <Typography variant="h4" gutterBottom align="center">
-        Profile
-      </Typography>
+    <div className="container max-w-2xl mx-auto p-6 space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Profile Settings</CardTitle>
+          <CardDescription>
+            Manage your profile information and security settings
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Profile Photo Section */}
+          <div className="flex items-center space-x-4">
+            <Avatar className="h-24 w-24">
+              <AvatarImage src={photoURL || ""} alt="Profile" />
+              <AvatarFallback>
+                <UserCircle className="h-12 w-12" />
+              </AvatarFallback>
+            </Avatar>
+            <div className="space-y-2">
+              <h3 className="text-lg font-medium">{name}</h3>
+              <p className="text-sm text-muted-foreground">{user?.email}</p>
+              <Button variant="outline" className="mt-2" asChild>
+                <label className="cursor-pointer">
+                  <Camera className="mr-2 h-4 w-4" />
+                  Change Photo
+                  <input
+                    type="file"
+                    hidden
+                    accept="image/*"
+                    onChange={handleFileChange}
+                  />
+                </label>
+              </Button>
+            </div>
+          </div>
 
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Grid container spacing={3} alignItems="center">
-          <Grid item>
-            <Avatar src={photoURL || "https://via.placeholder.com/150"} sx={{ width: 100, height: 100 }} />
-          </Grid>
-          <Grid item xs>
-            <Typography variant="h6">{name}</Typography>
-            <Typography color="textSecondary">{user?.email}</Typography>
-          </Grid>
-          <Grid item>
-            <Button component="label" variant="outlined">
-              Change Photo
-              <input type="file" hidden accept="image/*" onChange={handleFileChange} />
+          <Separator />
+
+          {/* Personal Information Section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Personal Information</h3>
+            <div className="space-y-2">
+              <Label htmlFor="name">Display Name</Label>
+              <Input
+                id="name"
+                value={name}
+                onChange={handleNameChange}
+                placeholder="Enter your name"
+              />
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* Security Section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Security</h3>
+            <Button
+              variant="outline"
+              onClick={() => setOpenPasswordDialog(true)}
+            >
+              <KeyRound className="mr-2 h-4 w-4" />
+              Change Password
             </Button>
-          </Grid>
-        </Grid>
-      </Paper>
+          </div>
 
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          Personal Information
-        </Typography>
-        <TextField fullWidth label="Name" value={name} onChange={handleNameChange} margin="normal" />
-      </Paper>
-
-      <Paper sx={{ p: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          Security
-        </Typography>
-        <Button variant="contained" color="primary" onClick={() => setOpenPasswordDialog(true)}>
-          Change Password
-        </Button>
-      </Paper>
-
-      <Dialog open={openPasswordDialog} onClose={() => setOpenPasswordDialog(false)}>
-        <DialogTitle>Change Password</DialogTitle>
-        <DialogContent>
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Current Password"
-            type="password"
-            name="currentPassword"
-            value={passwordForm.currentPassword}
-            onChange={handlePasswordChange}
-          />
-          <TextField
-            fullWidth
-            margin="normal"
-            label="New Password"
-            type="password"
-            name="newPassword"
-            value={passwordForm.newPassword}
-            onChange={handlePasswordChange}
-          />
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Confirm New Password"
-            type="password"
-            name="confirmPassword"
-            value={passwordForm.confirmPassword}
-            onChange={handlePasswordChange}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenPasswordDialog(false)}>Cancel</Button>
-          <Button variant="contained" color="primary">
-            Change Password
+          {/* Update Profile Button */}
+          <Button
+            className="w-full"
+            onClick={handleUpdateProfile}
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Updating...
+              </>
+            ) : (
+              "Update Profile"
+            )}
           </Button>
-        </DialogActions>
-      </Dialog>
+        </CardContent>
+      </Card>
 
-      <Button fullWidth variant="contained" color="primary" onClick={handleUpdateProfile} disabled={loading}>
-        {loading ? <CircularProgress size={24} /> : "Update Profile"}
-      </Button>
-    </Box>
+      {/* Password Change Dialog */}
+      <Dialog open={openPasswordDialog} onOpenChange={setOpenPasswordDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Change Password</DialogTitle>
+            <DialogDescription>
+              Enter your current password and choose a new one
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="currentPassword">Current Password</Label>
+              <Input
+                id="currentPassword"
+                type="password"
+                name="currentPassword"
+                value={passwordForm.currentPassword}
+                onChange={handlePasswordChange}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="newPassword">New Password</Label>
+              <Input
+                id="newPassword"
+                type="password"
+                name="newPassword"
+                value={passwordForm.newPassword}
+                onChange={handlePasswordChange}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">Confirm New Password</Label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                name="confirmPassword"
+                value={passwordForm.confirmPassword}
+                onChange={handlePasswordChange}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setOpenPasswordDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Button type="submit">Change Password</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 };
 

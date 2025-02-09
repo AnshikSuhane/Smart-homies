@@ -3,6 +3,7 @@ import { auth } from "./firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { toast } from "react-toastify";
 import SignInwithGoogle from "./SignInwithGoogle";
+import { Toast } from "@/Components/ui/toast";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -17,7 +18,7 @@ function Login() {
       });
       window.location.href = "/dashboard";
     } catch (error) {
-      toast.error(error.message, {
+      Toast.error(error.message, {
         position: "bottom-center",
       });
     }

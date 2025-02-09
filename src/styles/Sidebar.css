@@ -1,0 +1,117 @@
+/* Sidebar.css */
+.sidebar-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Sidebar Toggle Button (Mobile) */
+  .sidebar-toggle {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 50;
+    padding: 0.5rem;
+    border-radius: 6px;
+    color: #9ca3af; /* text-gray-400 */
+    background: transparent;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .sidebar-toggle:hover {
+    color: #6b7280; /* text-gray-500 */
+    background: #f3f4f6; /* bg-gray-100 */
+  }
+  
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 16rem;
+    height: 100vh;
+    background-color: #1f2937; /* bg-gray-800 */
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 4rem;
+    padding: 1rem;
+    background-color: #4f46e5; /* bg-indigo-600 */
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  
+  .sidebar-links {
+    flex-grow: 1;
+    margin-top: 1.5rem;
+    padding-left: 1rem;
+  }
+  
+  .sidebar-links li {
+    list-style: none;
+  }
+  
+  .sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    text-decoration: none;
+    color: #d1d5db; /* text-gray-300 */
+    border-radius: 6px;
+    transition: background 0.2s ease-in-out;
+  }
+  
+  .sidebar-link:hover {
+    background-color: #374151; /* bg-gray-700 */
+  }
+  
+  .sidebar-link.active {
+    background-color: #6366f1; /* bg-indigo-500 */
+    color: white;
+  }
+  
+  .signout-btn {
+    width: 100%;
+    padding: 1rem;
+    background-color: #ef4444; /* bg-red-600 */
+    color: white;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+  }
+  
+  .signout-btn:hover {
+    background-color: #dc2626;
+  }
+  
+  .main-content {
+    flex: 1;
+    padding: 1rem;
+    min-height: 100vh;
+    padding-left: 0;
+  }
+  
+  @media (min-width: 1024px) {
+    .sidebar {
+      transform: translateX(0);
+      position: static;
+    }
+  
+    .main-content {
+      padding-left: 16rem;
+    }
+  }
+  

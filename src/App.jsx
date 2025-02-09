@@ -21,6 +21,7 @@ import Profile from "./pages/Profile";
 import RoomDetail from "./pages/RoomDetail";
 import { ThemeProviderWrapper } from "./Theme/Theme";
 import Footer from "./Components/Footers";
+import Chatbot from "./Components/Chatbot";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -80,7 +81,7 @@ function App() {
                 path="/profile"
                 element={user ? <Profile /> : <Navigate to="/" />}
               />
-              {/* <Route path="/about" element={user ? <About /> : <Navigate to="/login" />} /> */}
+              { <Route path="/Ai" element={user ? <Chatbot /> : <Navigate to="/" />} /> }
             </Routes>
             <ToastContainer />
           </div>

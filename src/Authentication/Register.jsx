@@ -3,6 +3,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "./firebase";
 import { toast } from "react-toastify";
 import { setDoc, doc } from "firebase/firestore";
+import { Toast } from "@/Components/ui/toast";
 
 function Register() {
   const [email, setEmail] = useState("");
@@ -27,7 +28,7 @@ function Register() {
         position: "top-center",
       });
     } catch (error) {
-      toast.error(error.message, {
+      Toast.error(error.message, {
         position: "bottom-center",
       });
     }

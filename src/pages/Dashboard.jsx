@@ -11,6 +11,21 @@ import {
   Activity,
 } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Alert,
+  AlertDescription,
+} from "@/components/ui/alert";
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
@@ -75,197 +90,129 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchAllRoomAppliance();
-
-    // Optional: Set up real-time updates
-    // const intervalId = setInterval(fetchAllRoomAppliance, 30000);
-    // return () => clearInterval(intervalId);
   }, []);
 
   const getRoomIcon = (roomName) => {
     const lowercaseName = roomName.toLowerCase();
     if (lowercaseName.includes("living")) return <Home className="w-6 h-6" />;
-    if (lowercaseName.includes("bedroom"))
-      return <Thermometer className="w-6 h-6" />;
-    if (lowercaseName.includes("kitchen"))
-      return <Lightbulb className="w-6 h-6" />;
+    if (lowercaseName.includes("bedroom")) return <Thermometer className="w-6 h-6" />;
+    if (lowercaseName.includes("kitchen")) return <Lightbulb className="w-6 h-6" />;
     return <Cpu className="w-6 h-6" />;
   };
 
-  //calculateTotalDevices
   const calculateTotalDevices = (rooms) => {
     return rooms
       ? rooms.reduce((total, room) => total + (room.devices?.length || 0), 0)
       : 0;
   };
 
-  // loading
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="animate-spin">
-          <Cpu className="w-12 h-12 text-blue-600" />
+          <Cpu className="w-12 h-12 text-primary" />
         </div>
       </div>
     );
   }
 
-  // // Alerts for Device Malfunctions function
-
-  // async function fetchUserDataAndCheckMalfunctions() {
-  //   try {
-  //     const response = await fetch(
-  //       `https://jagannath-45cbd-default-rtdb.firebaseio.com/users/${userId}.json`
-  //     );
-  //     if (!response.ok) {
-  //       throw new Error("Failed to fetch data");
-  //     }
-
-  //     const user = await response.json();
-  //     checkDeviceMalfunctions(user);
-  //   } catch (error) {
-  //     console.error("Error fetching user data:", error);
-  //   }
-  // }
-
-  // function checkDeviceMalfunctions(user) {
-  //   const currentTime = Date.now();
-  //   // const threshold = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
-  //   const threshold = 60000; // 24 hours in milliseconds
-
-  //   // Iterate through each room
-  //   user.rooms.forEach((room) => {
-  //     console.log(`🔹 Checking devices in room: ${room.roomName}`);
-
-  //     // Iterate through each device in the room
-  //     room.devices.forEach((device) => {
-  //       if (device.status === "on") {
-  //         const elapsedTime = currentTime - device.start_time;
-
-  //         if (elapsedTime > threshold) {
-  //           device.alert = true;
-  //           console.log(
-  //             `⚠️ ALERT: The device '${device.name}' in room '${room.roomName}' has been ON for more than 24 hours.`
-  //           );
-  //         }
-  //       }
-  //     });
-  //   });
-  // }
-
-  // useEffect(() => {
-  //   fetchUserDataAndCheckMalfunctions(); // Call function once
-  //   const interval = setInterval(fetchUserDataAndCheckMalfunctions, 60000);
-
-  //   return () => clearInterval(interval); // Cleanup
-  // }, [fetchUserDataAndCheckMalfunctions]); // Ensure dependencies are correct
-
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-6xl mx-auto">
-        {/* Dashboard Header */}
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-800">
-              Smart Home Dashboard
-            </h1>
-            <p className="text-gray-500">
-              {userData?.rooms
-                ? `${userData.rooms.length} Rooms, ${calculateTotalDevices(
-                    userData.rooms
-                  )} Devices`
-                : "No Rooms Yet"}
-            </p>
-          </div>
-          <button
-            onClick={() => setIsAddRoomModalOpen(true)}
-            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            <Plus className="w-5 h-5" />
-            Add Room
-          </button>
-        </div>
+    <div className="min-h-screen bg-background p-6">
+      <div className="max-w-6xl mx-auto space-y-6">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <div>
+              <CardTitle className="text-3xl">Smart Home Dashboard</CardTitle>
+              <p className="text-muted-foreground">
+                {userData?.rooms
+                  ? `${userData.rooms.length} Rooms, ${calculateTotalDevices(
+                      userData.rooms
+                    )} Devices`
+                  : "No Rooms Yet"}
+              </p>
+            </div>
+            <Button onClick={() => setIsAddRoomModalOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" /> Add Room
+            </Button>
+          </CardHeader>
+        </Card>
 
-        {/* Rooms Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {userData?.rooms ? (
             userData.rooms.map((room, index) => (
-              <div
+              <Card
                 key={room.id || index}
-                className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-all cursor-pointer"
+                className="hover:shadow-lg transition-all cursor-pointer"
                 onClick={() => navigate(`/room/${room.id}`)}
               >
-                <div className="flex justify-between items-center mb-4">
-                  <div className="flex items-center gap-4">
-                    <div className="bg-blue-100 p-3 rounded-full">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <div className="flex items-center space-x-4">
+                    <div className="bg-primary/10 p-3 rounded-full">
                       {getRoomIcon(room.roomName)}
                     </div>
-                    <h3 className="text-xl font-semibold">{room.roomName}</h3>
+                    <CardTitle>{room.roomName}</CardTitle>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Power className="w-5 h-5 text-green-500" />
-                    <span className="text-gray-600">
-                      {room.devices?.length || 0} Devices
-                    </span>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center space-x-2">
+                      <Power className="w-4 h-4 text-green-500" />
+                      <span className="text-muted-foreground">
+                        {room.devices?.length || 0} Devices
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Activity className="w-4 h-4 text-primary" />
+                      <span className="text-muted-foreground">Active</span>
+                    </div>
                   </div>
-                </div>
-                <div className="mt-4 flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <Activity className="w-5 h-5 text-blue-500" />
-                    <span className="text-gray-600">Active</span>
-                  </div>
-                  <button className="text-blue-600 hover:underline">
+                  <Button variant="link" className="mt-4 w-full">
                     Manage Room
-                  </button>
-                </div>
-              </div>
+                  </Button>
+                </CardContent>
+              </Card>
             ))
           ) : (
-            <div className="col-span-full text-center py-12 bg-white rounded-lg shadow-md">
-              <p className="text-gray-500 mb-4">No rooms have been added yet</p>
-              <button
-                onClick={() => setIsAddRoomModalOpen(true)}
-                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
-              >
-                Create First Room
-              </button>
-            </div>
+            <Card className="col-span-full">
+              <CardContent className="flex flex-col items-center justify-center space-y-4 py-12">
+                <Alert>
+                  <AlertDescription>
+                    No rooms have been added yet. Create your first room to get started.
+                  </AlertDescription>
+                </Alert>
+                <Button onClick={() => setIsAddRoomModalOpen(true)}>
+                  <Plus className="mr-2 h-4 w-4" /> Create First Room
+                </Button>
+              </CardContent>
+            </Card>
           )}
         </div>
 
-        {/* Add Room Modal */}
-        {isAddRoomModalOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-8 w-full max-w-md">
-              <h2 className="text-2xl font-bold mb-6 text-center">
-                Add New Room
-              </h2>
-              <input
-                type="text"
+        <Dialog open={isAddRoomModalOpen} onOpenChange={setIsAddRoomModalOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add New Room</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <Input
                 placeholder="Enter Room Name (e.g., Living Room)"
                 value={newRoomName}
                 onChange={(e) => setNewRoomName(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              <div className="flex justify-between">
-                <button
-                  onClick={() => setIsAddRoomModalOpen(false)}
-                  className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={addNewRoom}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                >
-                  Add Room
-                </button>
-              </div>
             </div>
-          </div>
-        )}
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsAddRoomModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={addNewRoom}>Add Room</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
 };
 
 export default Dashboard;
+
+

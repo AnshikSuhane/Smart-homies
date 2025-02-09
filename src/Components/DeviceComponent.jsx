@@ -1,181 +1,167 @@
 /* eslint-disable react/prop-types */
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Slider } from "@/components/ui/slider";
+import { 
+  AlertCircle, 
+  Power, 
+  Trash2, 
+  Sun, 
+  Fan, 
+  Thermometer 
+} from "lucide-react";
+import {
+  Alert,
+  AlertDescription,
+} from "@/components/ui/alert";
+
 const DeviceComponent = ({
-    userData,
-    userIndex,
-    deleteDevice,
-    toggleDeviceStatus,
-    updateDeviceSetting,
-  }) => {
-    return (
-      <div>
-        {userData?.rooms?.map((room, roomIndex) =>
-          room?.devices?.length > 0
-            ? room.devices.map((device, deviceIndex) =>
-                device ? (
-                  <div
-                    key={device.id || `${userIndex}-${roomIndex}-${deviceIndex}`}
-                    className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 p-6"
-                  >
-                    <div className="flex justify-between items-center mb-4">
-                      <div className="flex items-center gap-3">
-                        <div>
-                          <h3 className="text-xl font-semibold text-gray-800">
-                            {device.name}
-                          </h3>
-                          <p className="text-sm text-gray-500">{room.name}</p>
-                        </div>
+  userData,
+  userIndex,
+  deleteDevice,
+  toggleDeviceStatus,
+  updateDeviceSetting,
+}) => {
+  return (
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      {userData?.rooms?.map((room, roomIndex) =>
+        room?.devices?.length > 0
+          ? room.devices.map((device, deviceIndex) =>
+              device ? (
+                <Card 
+                  key={device.id || `${userIndex}-${roomIndex}-${deviceIndex}`} 
+                  className="transition-all duration-300 hover:shadow-md"
+                >
+                  <CardHeader className="space-y-1">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        {device.name === "SpotLights" && <Sun className="w-4 h-4" />}
+                        {device.name === "Fan" && <Fan className="w-4 h-4" />}
+                        {device.name === "Thermostat" && <Thermometer className="w-4 h-4" />}
+                        <CardTitle className="text-lg">{device.name}</CardTitle>
                       </div>
-                      <div className="flex gap-2">
-                        {/* Toggle ON / OFF Button */}
-                        <button
-                          onClick={() =>
-                            toggleDeviceStatus(
-                              userIndex,
-                              roomIndex,
-                              deviceIndex,
-                              device.status
-                            )
-                          }
-                          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                            device.status === "on"
-                              ? "bg-green-500 hover:bg-green-600 text-white"
-                              : "bg-gray-200 hover:bg-gray-300 text-gray-700"
-                          }`}
-                        >
-                          {device.status?.toUpperCase()}
-                        </button>
-  
-                        {/* Delete Button */}
-                        <button
-                          onClick={() =>
-                            deleteDevice(userIndex, roomIndex, deviceIndex)
-                          }
-                          className="p-2 text-red-500 hover:bg-red-50 rounded-lg"
-                          title="Delete device"
-                        >
-                          delete
-                        </button>
-                      </div>
+                      <Badge 
+                        variant={device.status === "on" ? "default" : "secondary"}
+                        className="capitalize"
+                      >
+                        {device.status}
+                      </Badge>
                     </div>
-  
-                    {/* Spotlights */}
+                    <p className="text-sm text-muted-foreground">{room.name}</p>
+                  </CardHeader>
+
+                  <CardContent className="space-y-4">
                     {device.name === "SpotLights" && (
-                      <div className="mb-4">
-                        <label className="block text-gray-700 text-sm mb-2">
-                          Brightness
-                        </label>
-                        <input
-                          type="range"
-                          min="0"
-                          max="100"
-                          value={device.brightness}
-                          onChange={(e) =>
-                            updateDeviceSetting(
-                              userIndex,
-                              roomIndex,
-                              deviceIndex,
-                              {
-                                brightness: parseInt(e.target.value),
-                              }
-                            )
+                      <div className="space-y-2">
+                        <div className="flex justify-between">
+                          <label className="text-sm font-medium">Brightness</label>
+                          <span className="text-sm text-muted-foreground">{device.brightness}%</span>
+                        </div>
+                        <Slider
+                          defaultValue={[device.brightness]}
+                          max={100}
+                          step={1}
+                          className="mt-2"
+                          onValueChange={(value) =>
+                            updateDeviceSetting(userIndex, roomIndex, deviceIndex, { brightness: value[0] })
                           }
-                          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
                         />
                       </div>
                     )}
-  
-                    {/* Fans */}
+
                     {device.name === "Fan" && (
-                      <div className="flex justify-center gap-2">
+                      <div className="grid grid-cols-3 gap-2">
                         {["Slow", "Medium", "Fast"].map((speed) => (
-                          <button
+                          <Button
                             key={speed}
+                            variant={device.speed === speed ? "default" : "outline"}
+                            size="sm"
+                            className="w-full"
                             onClick={() =>
-                              updateDeviceSetting(
-                                userIndex,
-                                roomIndex,
-                                deviceIndex,
-                                {
-                                  speed,
-                                }
-                              )
+                              updateDeviceSetting(userIndex, roomIndex, deviceIndex, { speed })
                             }
-                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                              device.speed === speed
-                                ? "bg-blue-500 text-white"
-                                : "bg-gray-200 hover:bg-gray-300 text-gray-700"
-                            }`}
                           >
                             {speed}
-                          </button>
+                          </Button>
                         ))}
                       </div>
                     )}
-  
-                    {/* Thermostat */}
+
                     {device.name === "Thermostat" && (
-                      <div className="flex flex-col items-center">
-                        <div className="w-24 h-24 rounded-full border-4 border-blue-500 flex items-center justify-center text-2xl font-semibold text-blue-700 mb-3">
+                      <div className="flex flex-col items-center space-y-4">
+                        <div className="w-24 h-24 flex items-center justify-center text-2xl font-bold rounded-full border-2 bg-background">
                           {device.temperature}°C
                         </div>
-  
                         <div className="flex gap-2">
-                          <button
+                          <Button
+                            variant="outline"
+                            size="icon"
                             onClick={() =>
-                              updateDeviceSetting(
-                                userIndex,
-                                roomIndex,
-                                deviceIndex,
-                                {
-                                  temperature: device.temperature + 1,
-                                }
-                              )
+                              updateDeviceSetting(userIndex, roomIndex, deviceIndex, {
+                                temperature: device.temperature + 1,
+                              })
                             }
-                            className="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded-lg text-xl font-semibold"
                           >
                             +
-                          </button>
-                          <button
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="icon"
                             onClick={() =>
-                              updateDeviceSetting(
-                                userIndex,
-                                roomIndex,
-                                deviceIndex,
-                                {
-                                  temperature: device.temperature - 1,
-                                }
-                              )
+                              updateDeviceSetting(userIndex, roomIndex, deviceIndex, {
+                                temperature: device.temperature - 1,
+                              })
                             }
-                            className="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded-lg text-xl font-semibold"
                           >
                             -
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     )}
-  
-                    <div className="space-y-3 mt-4">
-                      <div className="flex items-center text-gray-600">
-                        <span>Running time: {device.total_time}</span>
-                      </div>
-                      {device.alert && (
-                        <div className="flex items-center text-yellow-500">
-                          <span>Alert condition!</span>
-                        </div>
-                      )}
+
+                    <div className="text-sm text-muted-foreground">
+                      Running time: {device.total_time}
                     </div>
-                  </div>
-                ) : (
-                  <h4 key={`${userIndex}-${roomIndex}-${deviceIndex}`}>
-                    Device is not added yet
-                  </h4>
-                )
+
+                    {device.alert && (
+                      <Alert variant="warning">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertDescription>
+                          Alert condition detected!
+                        </AlertDescription>
+                      </Alert>
+                    )}
+                  </CardContent>
+
+                  <CardFooter className="flex justify-between">
+                    <Button
+                      variant={device.status === "on" ? "default" : "secondary"}
+                      onClick={() => toggleDeviceStatus(userIndex, roomIndex, deviceIndex, device.status)}
+                      className="w-full mr-2"
+                    >
+                      <Power className="w-4 h-4 mr-2" />
+                      {device.status === "on" ? "Turn Off" : "Turn On"}
+                    </Button>
+                    <Button 
+                      variant="destructive"
+                      size="icon"
+                      onClick={() => deleteDevice(userIndex, roomIndex, deviceIndex)}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ) : (
+                <p key={`${userIndex}-${roomIndex}-${deviceIndex}`} className="text-muted-foreground">
+                  Device is not added yet
+                </p>
               )
-            : null
-        )}
-      </div>
-    );
-  };
-  
-  export default DeviceComponent;
-  
+            )
+          : null
+      )}
+    </div>
+  );
+};
+
+export default DeviceComponent;

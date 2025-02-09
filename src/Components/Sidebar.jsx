@@ -1,111 +1,144 @@
-/* eslint-disable react/prop-types */
-
+import { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
+import { auth } from "../Authentication/firebase";
+import { toast } from "react-toastify";
+import { useThemeContext } from "../Theme/Theme";
+import { Button } from "./ui/button";
 import {
-    Activity,
-    Calendar,
-    Home,
-    LogOut,
-    Menu,
-    Settings,
-    User,
-    X,
-    Sun,
-    Moon
-  } from "lucide-react";
-  import { useState } from "react";
-  import { NavLink, useNavigate } from "react-router-dom";
-  import { signOut } from "firebase/auth";
-  import { auth } from "../Authentication/firebase";
-  import { toast } from "react-toastify";
-  import { useThemeContext } from "../Theme/Theme";
-  
-  const Sidebar = ({ children }) => {
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const { toggleColorMode, mode } = useThemeContext();
-    const navigate = useNavigate();
-  
-    const handleSignOut = async () => {
-      try {
-        await signOut(auth);
-        toast.success("Successfully signed out", { position: "top-center" });
-        navigate("/");
-      } catch (error) {
-        toast.error("Error signing out", { position: "top-center" });
-        console.log(error.message);
-      }
-    };
-  
-    return (
-      <div className="min-h-screen flex flex-col lg:flex-row">
-        <button
-          type="button"
-          className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        >
-          <span className="sr-only">Open sidebar</span>
-          {isSidebarOpen ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
-        </button>
-  
-        {/* Sidebar */}
-        <div
-          className={`fixed inset-y-0 left-0 z-40 w-64 bg-gray-800 shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
-            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
-        >
-          <div className="flex flex-col h-full">
-            <div className="flex items-center justify-between h-16 px-4 bg-indigo-600">
-              <h1 className="text-xl font-bold text-white">SmartHome Manager</h1>
-              <div className="flex gap-3">
-                <button className="text-white" onClick={toggleColorMode}>
-                  {mode === "dark" ? <Sun size={24} /> : <Moon size={24} />}
-                </button>
-                <button className="lg:hidden text-white" onClick={() => setIsSidebarOpen(false)}>
-                  <X size={24} />
-                </button>
-              </div>
-            </div>
-  
-            <ul className="mt-8 flex-1 space-y-2">
-              {[
-                { path: "/", icon: <Home size={20} />, label: "Dashboard" },
-                { path: "/routines", icon: <Calendar size={20} />, label: "Routines" },
-                { path: "/energy", icon: <Activity size={20} />, label: "Energy" },
-                { path: "/profile", icon: <User size={20} />, label: "Profile" },
-                { path: "/settings", icon: <Settings size={20} />, label: "Settings" },
-              ].map((item) => (
-                <li key={item.path}>
+  Activity,
+  Calendar,
+  Home,
+  LogOut,
+  Settings,
+  User,
+  Sun,
+  Moon,
+  Bot,
+  Menu,
+  X,
+} from "lucide-react";
+import Logo from "../assets/logo.jpg";
+
+const Navbar = () => {
+  const { toggleColorMode, mode } = useThemeContext();
+  const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      toast.success("Successfully signed out", { position: "top-center" });
+      navigate("/");
+    } catch (error) {
+      toast.error("Error signing out", { position: "top-center" });
+      console.error(error.message); // Use console.error for errors
+    }
+  };
+
+  const navItems = [
+    { path: "/", icon: <Home size={20} />, label: "Dashboard" },
+    { path: "/routines", icon: <Calendar size={20} />, label: "Routines" },
+    { path: "/energy", icon: <Activity size={20} />, label: "Energy" },
+    { path: "/profile", icon: <User size={20} />, label: "Profile" },
+    { path: "/settings", icon: <Settings size={20} />, label: "Settings" },
+    { path: "/ai", icon: <Bot size={20} />, label: "AI Assistance" },
+  ];
+
+  return (
+    <nav className="bg-gray-400 text-gray-900 p-4 shadow-lg">
+      <div className="container mx-auto flex flex-col md:flex-row justify-between items-center"> {/* Combined flex container */}
+        {/* Logo & Brand Name */}
+        <div className="flex items-center gap-3">
+          <img
+            src={Logo}
+            alt="SmartHome Logo"
+            className="h-28 w-20 md:h-10 rounded-2xl transition-all duration-300 hover:scale-110" // Increased size (h-24 w-24)
+          />
+          <h1 className="text-2xl font-bold tracking-wide">SmartHome Manager</h1>
+        </div>
+
+        {/* Navigation Links (Desktop) */}
+        <div className="hidden md:flex items-center space-x-4">
+          {navItems.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) =>
+                `flex items-center gap-x-2 px-4 py-2 rounded-lg transition-all duration-300 ${
+                  isActive
+                    ? "bg-white text-indigo-600 shadow-md"
+                    : "hover:bg-indigo-500 hover:text-white"
+                }`
+              }
+            >
+              {item.icon}
+              <span>{item.label}</span>
+            </NavLink>
+          ))}
+          <button className="text-white" onClick={toggleColorMode}>
+            {mode === "dark" ? <Sun size={24} /> : <Moon size={24} />}
+          </button>
+          <button
+            onClick={handleSignOut}
+            className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-700 text-white rounded-lg shadow-md transition-all"
+          >
+            <LogOut size={20} />
+            <span>Sign Out</span>
+          </button>
+        </div>
+
+        {/* Mobile Menu Button & Content */}
+        <div className="md:hidden flex items-center"> {/* Ensure alignment */}
+          <button
+            className="text-gray-900 p-2 rounded-lg hover:bg-gray-500 hover:text-white transition-colors"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            {menuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+
+          {menuOpen && (
+            <div className="absolute top-full left-0 right-0 bg-gray-400 p-4 mt-1 shadow-lg rounded-b-lg"> {/* Positioned menu */}
+              <div className="space-y-2">
+                {navItems.map((item) => (
                   <NavLink
+                    key={item.path}
                     to={item.path}
+                    onClick={() => setMenuOpen(false)}
                     className={({ isActive }) =>
-                      `flex items-center gap-x-4 p-3 rounded-lg transition-all duration-200 ${
-                        isActive ? "bg-indigo-500 text-white" : "text-gray-300 hover:bg-gray-700"
+                      `flex items-center gap-x-2 px-4 py-2 rounded-lg transition-all duration-300 ${
+                        isActive
+                          ? "bg-white text-indigo-600 shadow-md"
+                          : "hover:bg-indigo-500 hover:text-white"
                       }`
                     }
-                    onClick={() => setIsSidebarOpen(false)}
                   >
-                    {item.icon} {item.label}
+                    {item.icon}
+                    <span>{item.label}</span>
                   </NavLink>
-                </li>
-              ))}
-            </ul>
-  
-            <div className="p-4 border-t border-gray-700">
-              <button
-                onClick={handleSignOut}
-                className="flex items-center w-full px-4 py-2 text-gray-300 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-200"
-              >
-                <LogOut className="h-5 w-5 mr-3" aria-hidden="true" />
-                Sign Out
-              </button>
+                ))}
+                <div className="flex items-center justify-between pt-4 border-t border-gray-500">
+                  <Button
+                    onClick={toggleColorMode}
+                    className="p-2 bg-white text-indigo-600 rounded-lg shadow-md hover:bg-gray-200"
+                  >
+                    {mode === "dark" ? <Sun size={24} /> : <Moon size={24} />}
+                  </Button>
+                  <button
+                    onClick={handleSignOut}
+                    className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-700 text-white rounded-lg shadow-md transition-all"
+                  >
+                    <LogOut size={20} />
+                    <span>Sign Out</span>
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        <div className="flex-1 lg:pl-64 p-4">
-          <main className="min-h-screen">{children}</main>
+          )}
         </div>
       </div>
-    );
-  };
-  
-  export default Sidebar;
-  
+    </nav>
+  );
+};
+
+export default Navbar;
