@@ -22,7 +22,7 @@ SmartHome_Manager is a smart home management system built using **React JSX**, *
 - **Authentication**: Firebase Auth (planned future enhancement)
 
 ## 📂 Project Structure
-
+```
 SmartHome_Manager/
 │── src/
 │   ├── components/    # Reusable UI components
@@ -36,7 +36,7 @@ SmartHome_Manager/
 │── public/
 │── package.json
 │── README.md
-
+```
 
 ## 🏃‍♂️ Getting Started
 ### 1️⃣ Prerequisites
@@ -46,11 +46,11 @@ Ensure you have the following installed:
 
 ### 2️⃣ Installation
 Clone the repository and install dependencies:
-
+```bash
 git clone https://github.com/yourusername/Smart-homies.git
 cd SmartHome_Manager
 npm install  # or yarn install
-
+```
 
 ### 3️⃣ Running the Project
 To start the development server:
@@ -71,10 +71,7 @@ npm test  # or yarn test
 ```
 
 ## 📸 Screenshots
-![image](https://github.com/user-attachments/assets/b7423bf4-9db2-45ae-88b5-5413544f0a57)
-![image](https://github.com/user-attachments/assets/e86f6ca4-ac90-4fcb-99d1-1629c19cc3d4)
-![image](https://github.com/user-attachments/assets/d9f3915e-d6b9-4ab9-9cd5-26cdb5d73111)
-
+(Add screenshots or GIFs of your application for better visualization.)
 
 ## 📌 Future Enhancements
 - Integrate a **backend** for real-time device control.
@@ -100,5 +97,5 @@ This project is licensed under the **MIT License**.
 
 ---
 
-💡 *Built with ❤️ by  Anshik Suhane, Jagannath Sethi and Srinandan*
+💡 *Built with ❤️ by Jagannath Sethi, Anshik Suhane, and Srinandan*
 
