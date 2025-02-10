@@ -23,7 +23,7 @@ import { ThemeProviderWrapper } from "./Theme/Theme";
 import Footer from "./Components/Footers";
 import Chatbot from "./Components/Chatbot";
 import Team from "./pages/Team";
-
+import Report from "./pages/Report";
 function App() {
   const [user, setUser] = useState(null);
 
@@ -84,7 +84,7 @@ function App() {
               />
             <Route path="/Ai" element={user ? <Chatbot /> : <Navigate to="/" />} /> 
             <Route path="/team" element={user ? <Team /> : <Navigate to="/" />} /> 
-
+            <Route path="/reports" element={user ? <Report /> : <Navigate to="/" />} /> 
             </Routes>
             <ToastContainer />
           </div>
